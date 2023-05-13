@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-contract MultiSigWallet {
+import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+
+contract MultiSigWallet is Initializable {
     event Deposit(address indexed sender, uint amount, uint balance);
     event SubmitTransaction(
         address indexed owner,
@@ -51,7 +53,7 @@ contract MultiSigWallet {
         _;
     }
 
-    constructor(address[] memory _owners, uint _numConfirmationsRequired) {
+    function initialize(address[] memory _owners, uint _numConfirmationsRequired) public initializer{
         require(_owners.length > 0, "owners required");
         require(
             _numConfirmationsRequired > 0 &&
