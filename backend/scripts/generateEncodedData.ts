@@ -1,7 +1,7 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const Multisig = await ethers.getContractFactory("MultiSigWallet");
+  const Multisig = await ethers.getContractFactory("MultisigWallet");
   const encodedData = await Multisig.interface.encodeFunctionData(
     "initialize",
     [["0xf14fD5FFEbBa9493Dd7Fb2CC33D97B1589C29A88"], 1]
