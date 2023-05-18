@@ -24,26 +24,20 @@ import {
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
-type DeployModalProps = {
+type CreateWalletModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
-const DeployModal = ({ isOpen, onClose }: DeployModalProps) => {
+const CreateWalletModal = ({ isOpen, onClose }: CreateWalletModalProps) => {
 
 
+  const router = useRouter();
+  const address = useAddress(); //get address metamask wallet
+  
+  const { contract: factoryContract, isLoading: isFactoryContractLoading } = useContract(FACTORY_ADDRESS, "custom");
+  const { contract: implementationContract } = useContract( IMPLEMENTATION_ADDRESS, "custom");
 
-    const router = useRouter();
-  const address = useAddress();
-  const { contract: factoryContract, isLoading: isFactoryContractLoading } =
-    useContract(FACTORY_ADDRESS, "custom");
-  const { contract: implementationContract } = useContract(
-    IMPLEMENTATION_ADDRESS,
-    "custom"
-  );
-  const { mutateAsync: deploy, isLoading: isDeploying } = useContractWrite(
-    factoryContract,
-    "deployContract"
-  );
+  const { mutateAsync: deploy, isLoading: isDeploying } = useContractWrite( factoryContract, "deployContract");
   const { data: events, refetch: refetchEvents } = useContractEvents(
     factoryContract,
     "ContractDeployed",
@@ -76,6 +70,8 @@ const DeployModal = ({ isOpen, onClose }: DeployModalProps) => {
     
       const toast = useToast();
 
+
+    //handle create new multisig wallet
     const deployNow = async () => {
         try {
           // encode transaction
@@ -93,15 +89,15 @@ const DeployModal = ({ isOpen, onClose }: DeployModalProps) => {
     
           toast({
             status: "success",
-            title: "Contract deployed",
-            description: "Your multi-sig contract has been deployed.",
+            title: "Wallet deployed",
+            description: "Your multi-sig wallet has been deployed.",
           });
           closeModal();
         } catch (err) {
           console.error(err);
           toast({
             status: "error",
-            title: "Error deploying contract",
+            title: "Error deploying wallet",
             description: "Please try again later.",
           });
         }
@@ -111,9 +107,9 @@ const DeployModal = ({ isOpen, onClose }: DeployModalProps) => {
         setNoOfSignaturesRequired(0);
         setOwners([""]);
         setTxHash("");
-    
         onClose();
       };
+
   return (
     <Modal onClose={onClose} isOpen={isOpen} isCentered>
     <ModalOverlay />
@@ -125,7 +121,7 @@ const DeployModal = ({ isOpen, onClose }: DeployModalProps) => {
           Enter the list owners of multisig wallet and number of owners required to confirm transactions and then click
           button <b>Deploy Now</b>.
           {owners.map((owner, index) => (
-            <FormControl display="flex" gap={2} mt={5}>
+            <FormControl display="flex" gap={2} mt={5} key={index}>
               <Input
                 type="text"
                 value={owner}
@@ -187,4 +183,4 @@ const DeployModal = ({ isOpen, onClose }: DeployModalProps) => {
   )
 }
 
-export default DeployModal
+export default CreateWalletModal

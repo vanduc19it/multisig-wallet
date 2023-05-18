@@ -13,18 +13,21 @@ type Props = {
     id: number;
     contractAddress: string;
   };
+
 const TransactionTableRow = ({ id, contractAddress }: Props) => {
 
-
   const toast = useToast();
+  
   const { contract } = useContract(contractAddress, "custom");
   const { data, refetch } = useContractRead(contract, "getTransaction", [id]);
   const { mutateAsync: sign, isLoading: isSigning } = useContractWrite(
     contract,
     "signTransaction"
   );
-  const address = useAddress();
-  const { data: signatures, error } = useContractEvents(
+  const address = useAddress();//get address metamask wallet
+  
+  //return array [] if owner not sign this transaction filter by transactionID and address owner
+  const { data: signatures} = useContractEvents(
     contract,
     "TransactionSigned",
     {
@@ -39,6 +42,8 @@ const TransactionTableRow = ({ id, contractAddress }: Props) => {
     }
   );
 
+
+    //handle sign confirm a transaction
     const signTxn = async () => {
         try {
           await sign({
@@ -61,6 +66,7 @@ const TransactionTableRow = ({ id, contractAddress }: Props) => {
           await refetch();
         }
       };
+
   return (
     <Tr>
     <Td>{id?.toString()}</Td>
@@ -83,22 +89,10 @@ const TransactionTableRow = ({ id, contractAddress }: Props) => {
       ) : data?.[3] === true ? (
         "N/A"
       ) : signatures?.length == 0 ? (
-        <Button
-          isDisabled={isSigning}
-          onClick={signTxn}
-          colorScheme="twitter"
-        >
-          Sign
-        </Button>
+        <Button isDisabled={isSigning} onClick={signTxn} colorScheme="twitter">Sign</Button>
       ) : (
         "Signed"
       )}
-
-      {/* ) : signatures?.length == 0 ? (
-        <Button colorScheme="twitter">Sign</Button>
-      ) : (
-        "Signed"
-      )} */}
     </Td>
   </Tr>
   )

@@ -1,8 +1,9 @@
 import { useRouter } from 'next/router';
-import React, { createRef, useRef } from 'react'
+import React, { createRef} from 'react'
 import { Button, Td, Tr, useToast } from "@chakra-ui/react";
 import copy from 'clipboard-copy';
 import { FiCopy } from 'react-icons/fi';
+
 type Props = {
     contractAddress: string;
   };
@@ -11,6 +12,7 @@ const ContractTableRow = ({ contractAddress }: Props) => {
 
     const router = useRouter();
 
+    //copy wallet addreess
     const toast = useToast();
     const walletRef = createRef<HTMLSpanElement>();
     const handleCopy = () => {
@@ -23,18 +25,14 @@ const ContractTableRow = ({ contractAddress }: Props) => {
         isClosable: true,
       });
     };
-    
   return (
     <Tr>
     <Td fontWeight={600} color="#7a7a7a">
         <span ref={walletRef}>{contractAddress}</span>
-        <Button onClick={handleCopy} ml={3} size="10"><FiCopy /></Button>
+        <Button onClick={handleCopy} ml={3} size="10"><FiCopy/></Button>
     </Td>
     <Td>
-      <Button
-        colorScheme="twitter"
-        onClick={() => router.push(`/contract/${contractAddress}`)}
-      >
+      <Button colorScheme="twitter" onClick={() => router.push(`/contract/${contractAddress}`)}>
         Manage
       </Button>
     </Td>

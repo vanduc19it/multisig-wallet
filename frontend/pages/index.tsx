@@ -1,35 +1,26 @@
-    import type { NextPage } from "next";
+import type { NextPage } from "next";
 import Navbar from "../components/Navbar";
-
 import ContractTableRow from "../components/ContractTableRow";
-import DeployModal from "../components/DeployModal";
+import CreateWalletModal from "../components/CreateWalletModal";
 import { FACTORY_ADDRESS } from "../address/contractAddress";
-import {
-  Button,
-  Flex,
-  Skeleton,
-  Table,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Button, Flex, Skeleton, Table, Tbody, Td, Text, Th, Thead, Tr, useDisclosure} from "@chakra-ui/react";
 import { useAddress, useContract, useContractRead } from "@thirdweb-dev/react";
 import Head from "next/head";
 import React from "react";
 
 const Home: NextPage = () => {
-  const address = useAddress();
-  const { contract } = useContract(FACTORY_ADDRESS, "custom");
-  const { data: deployedContracts, isLoading: isDeployedContractsLoading } = useContractRead(contract, "getDeployed", [address]);
-  const { data: countDeployed } = useContractRead(contract, "countDeployed", [
-    address,
-  ]);
-  const { isOpen, onClose, onOpen } = useDisclosure();
 
+  //get address metamask wallet
+  const address = useAddress();
+
+  const { contract } = useContract(FACTORY_ADDRESS, "custom");
+
+  //get all deployed contract
+  const { data: deployedContracts, isLoading: isDeployedContractsLoading } = useContractRead(contract, "getDeployed", [address]);
+  //get number of  deployed contract
+  const { data: countDeployed } = useContractRead(contract, "countDeployed", [address]);
+
+  const { isOpen, onClose, onOpen } = useDisclosure();
   
   return (
    <>
@@ -42,55 +33,53 @@ const Home: NextPage = () => {
 
       <Navbar />
 
-      <DeployModal isOpen={isOpen} onClose={onClose} />
+      <CreateWalletModal isOpen={isOpen} onClose={onClose} />
 
-<Flex
-  mt="7"
-  maxW="6xl"
-  mx="auto"
-  w="full"
-  justifyContent="space-between"
-  alignItems="center"
->
-  <Text fontWeight="bold" fontSize="3xl">
-    Deployed wallets
-  </Text>
-  <Button width={200} onClick={onOpen} bg='#efaa1f' colorScheme="yellow" fontWeight={700} color="white">
-    Create new wallet
-  </Button>
-</Flex>
+      <Flex
+          mt="7"
+          maxW="6xl"
+          mx="auto"
+          w="full"
+          justifyContent="space-between"
+          alignItems="center"
+      >
+          <Text fontWeight="bold" fontSize="3xl">Deployed wallets</Text>
+          <Button width={200} onClick={onOpen} bg='#efaa1f' colorScheme="yellow" fontWeight={700} color="white">
+              Create new wallet
+          </Button>
+      </Flex>
 
-<Table colorScheme="blackAlpha" maxW="6xl" w="full" mx="auto" mt={10}>
-  <Thead>
-    <Tr>
-      <Th>Multisig Wallet Address</Th>
-      <Th>Manage</Th>
-    </Tr>
-  </Thead>
-  <Tbody>
-    {isDeployedContractsLoading && (
-      <Tr>
-        <Td>
-          <Skeleton>0x12345678901234567890</Skeleton>
-        </Td>
-        <Td>
-          <Skeleton>Manage</Skeleton>
-        </Td>
-      </Tr>
-    )}
-    {countDeployed == 0 && (
-      <Tr>
-        <Td colSpan={2}>No contracts deployed.</Td>
-      </Tr>
-    )}
-    {deployedContracts?.map((contractAddress: string) => (
-      <ContractTableRow
-        contractAddress={contractAddress}
-        key={contractAddress}
-      />
-    ))}
-  </Tbody>
-</Table>
+      <Table colorScheme="blackAlpha" maxW="6xl" w="full" mx="auto" mt={10} mb={6}>
+        <Thead>
+          <Tr>
+            <Th>Multisig Wallet Address</Th>
+            <Th>Manage</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {isDeployedContractsLoading && (
+            <Tr>
+              <Td>
+                <Skeleton>0x12345678901234567890</Skeleton>
+              </Td>
+              <Td>
+                <Skeleton>Manage</Skeleton>
+              </Td>
+            </Tr>
+          )}
+          {countDeployed == 0 && (
+            <Tr>
+              <Td colSpan={2}>No wallet deployed.</Td>
+            </Tr>
+          )}
+          {deployedContracts?.map((contractAddress: string) => (
+            <ContractTableRow
+              contractAddress={contractAddress}
+              key={contractAddress}
+            />
+          ))}
+        </Tbody>
+      </Table>
    </>
   );
 };

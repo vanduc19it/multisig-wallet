@@ -15,8 +15,8 @@ import {
     Textarea,
     useToast,
   } from "@chakra-ui/react";
-  import { toWei, useContract, useContractWrite } from "@thirdweb-dev/react";
-  import React, { useState } from "react";
+import { toWei, useContract, useContractWrite } from "@thirdweb-dev/react";
+import React, { useState } from "react";
 
 type Props = {
     isOpen: boolean;
@@ -24,11 +24,7 @@ type Props = {
     contractAddress: string;
   };
 
-const CreateTransactionModal = ({
-    isOpen,
-    onClose,
-    contractAddress,
-  }: Props) => {
+const CreateTransactionModal = ({isOpen, onClose, contractAddress}: Props) => {
 
     const toast = useToast();
 
@@ -37,9 +33,9 @@ const CreateTransactionModal = ({
     const [data, setData] = useState<string>("0x");
   
     const { contract } = useContract(contractAddress, "custom");
-    const { mutateAsync: submitTransaction, isLoading: isSubmitting } =
-      useContractWrite(contract, "submitTransaction");
+    const { mutateAsync: submitTransaction, isLoading: isSubmitting } = useContractWrite(contract, "submitTransaction");
 
+    //handle create a transaction
     const createTxn = async () => {
         try {
           await submitTransaction({
@@ -73,19 +69,19 @@ const CreateTransactionModal = ({
         <ModalCloseButton />
         <ModalBody>
           <Text>
-            Enter the list owners of wallet and number of owners required to confirm transactions and click on <b>Create</b> to create a
+            Enter the destination address and number of ETH required and click on <b>Create</b> to create a
             transaction in the contract.
           </Text>
           <Flex direction="column" gap={5} mt={5}>
             <FormControl>
-              <FormLabel>Destination Address</FormLabel>
+              <FormLabel>To Address</FormLabel>
               <Input
                 value={destination}
                 onChange={(e) => setDestination(e.target.value)}
               />
             </FormControl>
             <FormControl>
-              <FormLabel>Value (in MATIC)</FormLabel>
+              <FormLabel>Value</FormLabel>
               <Input
                 type="number"
                 value={value}
